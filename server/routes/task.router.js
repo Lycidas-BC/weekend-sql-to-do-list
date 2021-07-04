@@ -96,7 +96,7 @@ taskRouter.post('/insertToTable', (req, res) => {
     query += rows.join(', ') + ';';
     pool.query(query)
         .then(result => {
-            res.send(result.rows);
+            res.send(`inserted ${result.rowCount} rows into ${req.body.tableName}`);
         })
         .catch(err => {
             console.log('error in /insertToTable', err, 'query:', query);
