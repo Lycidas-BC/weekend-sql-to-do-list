@@ -84,6 +84,24 @@ function insertToTable(tableName, values) {
     });
 } //end insertToTable
 
+function updateTable(tableName, values, taskId) {
+    $.ajax({
+        method: 'PUT',
+        url: `/task/updateTable/${taskId}`,
+        data: {
+            tableName: tableName,
+            values: values
+        }
+    })
+    .then((response) => {
+        console.log(response);
+    })
+    .catch((error) => {
+        console.log(`updateTable error.`, error);
+        alert(`updateTable error.`);
+    });
+} //end updateTable
+
 //remaining functions listed alphabetically
 
 function addCategory() {
