@@ -51,4 +51,8 @@ Additional README details can be found [here](https://github.com/PrimeAcademy/re
                 [ ] PUT
                 [ ] DELETE
         [ ] .gitignore
+    [ ] STRETCH
         [ ] branches for specific tasks
+        [ ] categories - color code tasks
+        [ ] check if DB and table exist from JS; if not, create them from JS???
+        [ ] when users add a new category, ask them what color
