@@ -1,13 +1,15 @@
 $( document ).ready(onReady);
 
 function onReady() {
-    initializationSequence();
-    $( "#addCategoryBtn" ).on("click", addCategory);
+    initializeDB();
+    $( "#expandCategoryBtn" ).on("click", expandCategory);
+    $( "#colors" ).on("click", "#addCategoryBtn", addCategory);
+    $( "#addTaskBtn" ).on("click", addTask);
 } //end onReady
 
-//initialize globals
+//initialize any globals
 
-//general database functions
+//GENERAL DB FUNCTIONS (alphabetical)
 
 /**
  * checks if a table with the name tableName exists in connected database
@@ -55,7 +57,7 @@ function createTable(tableName, columns, values) {
         }
     })
     .then((response) => {
-        console.log(tableName, "successfully created!");
+        console.log(tableName, "table successfully created!");
         if (response && (typeof values !== 'undefined')) {
             insertToTable(tableName, values);
         }
@@ -66,6 +68,11 @@ function createTable(tableName, columns, values) {
     });
 } //end createTables
 
+/**
+ * insert to tableName from objectarray values
+ * @param {*} tableName 
+ * @param {*} values 
+ */
 function insertToTable(tableName, values) {
     $.ajax({
         method: 'POST',
@@ -84,6 +91,12 @@ function insertToTable(tableName, values) {
     });
 } //end insertToTable
 
+/**
+ * update tableName according to values where id = taskId
+ * @param {string} tableName 
+ * @param {objectarray} values 
+ * @param {int} taskId 
+ */
 function updateTable(tableName, values, taskId) {
     $.ajax({
         method: 'PUT',
@@ -102,37 +115,46 @@ function updateTable(tableName, values, taskId) {
     });
 } //end updateTable
 
-//remaining functions listed alphabetically
+//OTHER FUNCTIONS (alphabetical)
 
 function addCategory() {
-    if ($( "#addCategoryBtn" ).text() === "+") {
-        $( "#addCategoryBtn" ).text("-");
+    console.log('in addCategory');
+    const category=$( "#categoryNameIn" ).val();
+    const color=$('input[name=optionsRadios]:checked').val();
+    
+    insertToTable("category",[{category: category},{color: color}]);
+} //end addCategory
+
+function addTask() {
+    console.log('in addTask');
+} //end addTask
+
+function expandCategory() {
+    if ($( "#expandCategoryBtn" ).text() === "+") {
+        //if users click "+", add html for creating a new category and change button to "-"
+        $( "#expandCategoryBtn" ).text("-");
         $( "#inputTable" ).append(`
             <tr id="newCategoryRow">
-                <td>
-                </td>
-                <td>
-                </td>
-                <td style="vertical-align:top;">
-                    <label for="categoryNameIn" class="form-inline col-form-label" style="margin-left: 50px;">New Category:</label>
+                <td style="vertical-align:top; width: 100px">
+                    <label for="categoryNameIn" class="form-inline col-form-label" style="margin-top: 25px;">New Category:</label>
                 </td>
                 <td style="vertical-align:top;">
                     <div class="form-group">
                         <div class="form-inline">
-                            <input type="text" class="form-inline form-control" id="categoryNameIn" placeholder="New Category">
+                            <input type="text" class="form-inline form-control" id="categoryNameIn" placeholder="New Category" style="margin-top: 25px;">
                     </div>
                 </td>
             </tr>
         `);
         $( "#colors" ).append(`
-            <legend class="mt-4" id="colorRowLegend">Assign Color</legend>
+            <legend class="mt-4" id="colorRowLegend">Category Color</legend>
             <table id="colorTable">
                 <tr>
                     <fieldset class="form-group" id="categoryColorIn">
                         <td>
                             <div class="form-check" style="color:red;">
                                 <label class="form-check-label">
-                                    <input type="radio" class="form-check-input" name="optionsRadios" id="red" value="red" checked="">
+                                    <input type="radio" class="form-check-input" name="optionsRadios" id="red" value="red" checked="true">
                                     Red
                                 </label>
                             </div>
@@ -188,14 +210,17 @@ function addCategory() {
                     </fieldset>
                 </tr>
             </table>
+            <button type="submit" class="btn btn-primary" id="addCategoryBtn" style="margin-bottom: 25px;">Add Category</button>
         `);
     } else {
-        $( "#addCategoryBtn" ).text("+");
-        $( "#newCategoryRow").remove();
-        $( "#colorRowLegend").remove();
-        $( "#colorTable").remove();
-    }
-} //end addCategory
+        //if users click "-", remove html for creating a new category and change button to "-"
+        $( "#expandCategoryBtn" ).text("+");
+        $( "#newCategoryRow" ).remove();
+        $( "#colorRowLegend" ).remove();
+        $( "#colorTable" ).remove();
+        $( "#addCategoryBtn" ).remove();
+    };
+} //end expandCategory
 
 /**
  * check db communication
@@ -205,18 +230,18 @@ function addCategory() {
  * check existence of foreign keys
  * get tasks
  */
-function initializationSequence() {
+function initializeDB() {
     //Check if table "tasks" exists
     //If not, create table using array of {columnName: dataType} objects
-    checkIfTableExists("tasks", [{name: "varchar(50) NOT NULL"}, {statusId: "int DEFAULT '1'"}, {categoryId: "int"}, {description: "varchar(250)"}])
+    checkIfTableExists("tasks", [{name: "varchar(50) NOT NULL"}, {statusId: "int DEFAULT '1'"}, {categoryId: "int"}, {description: "varchar(250)"}]);
 
     //Check if table "status" exists
     //If not, create table using array of {columnName: dataType} objects
     //If not, populate using array of values
-    checkIfTableExists("status", [{status: "varchar(50) NOT NULL"}], [{status: 'Not started'}, {status: 'In progress'}, {status: 'Completed'}, {status: 'Paused'}, {status: 'Canceled'}])
+    checkIfTableExists("status", [{status: "varchar(50) NOT NULL"}], [{status: 'Not started'}, {status: 'In progress'}, {status: 'Completed'}, {status: 'Paused'}, {status: 'Canceled'}]);
 
     //Check if table "category" exists, if not run create
     //If not, create table using array of {columnName: dataType} objects
-    checkIfTableExists("category", [{category: "varchar(50) NOT NULL"}, {color: "varchar(25) NOT NULL"}])
+    checkIfTableExists("category", [{category: "varchar(50) NOT NULL"}, {color: "varchar(25) NOT NULL"}]);
 
 } //end initializeDB

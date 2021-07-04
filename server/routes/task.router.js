@@ -87,14 +87,23 @@ taskRouter.post('/insertToTable', (req, res) => {
         VALUES `;
 
     //list insert values in parentheses - (VALUE1, VALUE2, VALUE3...) - and append to array
-    let rows = []
+    //rows collects lines of form ($1, $2); values is the array of corresponding values (to protect against SQL injection)
+    let rows = [];
+    let values = [];
+    let inputCount = 0;
     for (const rowOfValues of req.body.values) {
-        rows.push( "('" + Object.values(rowOfValues).join("', '") + "')" );
+        let row = [];
+        for (const value of Object.values(rowOfValues)){
+            inputCount += 1;
+            row.push(`$${inputCount}`);
+            values.push(value);
+        }
+        rows.push( "(" + row.join(", ") + ")" );
     }
 
     //Join array - (ROW 1 Values), (ROW 2 Values), (ROW 3 Values)...; - and append to query
     query += rows.join(', ') + ';';
-    pool.query(query)
+    pool.query(query, values)
         .then(result => {
             res.send(`inserted ${result.rowCount} rows into ${req.body.tableName}`);
         })
