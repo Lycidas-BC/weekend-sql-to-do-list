@@ -1,7 +1,8 @@
 $( document ).ready(onReady);
 
 function onReady() {
-    initializeDB();
+    initializeDb();
+    initializeFromDb();
     $( "#expandCategoryBtn" ).on("click", expandCategory);
     $( "#colors" ).on("click", "#addCategoryBtn", addCategory);
     $( "#addTaskBtn" ).on("click", addTask);
@@ -121,8 +122,8 @@ function addCategory() {
     console.log('in addCategory');
     const category=$( "#categoryNameIn" ).val();
     const color=$('input[name=optionsRadios]:checked').val();
-    
     insertToTable("category",[{category: category, color: color}]);
+    return true;
 } //end addCategory
 
 function addTask() {
@@ -210,7 +211,7 @@ function expandCategory() {
                     </fieldset>
                 </tr>
             </table>
-            <button type="submit" class="btn btn-primary" id="addCategoryBtn" style="margin-bottom: 25px;">Add Category</button>
+            <button type="button" class="btn btn-primary" id="addCategoryBtn" style="margin-bottom: 25px;">Add Category</button>
         `);
     } else {
         //if users click "-", remove html for creating a new category and change button to "-"
@@ -219,7 +220,7 @@ function expandCategory() {
         $( "#colorRowLegend" ).remove();
         $( "#colorTable" ).remove();
         $( "#addCategoryBtn" ).remove();
-    };
+    }
 } //end expandCategory
 
 /**
@@ -230,7 +231,7 @@ function expandCategory() {
  * check existence of foreign keys
  * get tasks
  */
-function initializeDB() {
+function initializeDb() {
     //Check if table "tasks" exists
     //If not, create table using array of {columnName: dataType} objects
     checkIfTableExists("tasks", [{name: "varchar(50) NOT NULL"}, {statusId: "int DEFAULT '1'"}, {categoryId: "int"}, {description: "varchar(250)"}]);
@@ -244,4 +245,18 @@ function initializeDB() {
     //If not, create table using array of {columnName: dataType} objects
     checkIfTableExists("category", [{category: "varchar(50) NOT NULL"}, {color: "varchar(25) NOT NULL"}]);
 
-} //end initializeDB
+} //end initializeDb
+
+function initializeFromDb() {
+    console.log("in initializeFromDb");
+    populateCategories();
+    populateToDoList();
+} //end initializeFromDb
+
+function populateCategories() {
+    console.log('in populateCategories');
+} //end populateCategories
+
+function populateToDoList(params) {
+    console.log('in populateToDoList');
+} //end populateToDoList
