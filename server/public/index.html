@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-3.6.0.js"   integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="   crossorigin="anonymous"></script>
-    <script src="/scripts/client.js"></script>
+    <script src="scripts/client.js"></script>
     <link rel="stylesheet" href="styles/bootstrap.min.css">
     <link rel="stylesheet" href="styles/style.css">
     <title>To-Do List</title>
@@ -15,57 +15,61 @@
     <section id="allInputs">
         <form>
             <fieldset id="inputFieldset">
-              <legend>New Task</legend>
-              <table>
-                    <tr>
-                        <td>
-                            <label for="taskNameIn" class="form-inline col-form-label" style="margin-right: 10px;">Task Name:</label>
-                        </td>
-                        <td>
-                            <div class="form-group">
-                                <div class="form-inline">
-                                    <input type="text" class="form-inline form-control" id="taskNameIn" placeholder="New Task Name">
-                            </div>
-                        </td>
-                        <td>
-                            <label for="exampleSelect1" class="form-inline form-label" style="margin-left: 50px; margin-right: 10px;">Task Category:</label>
-                        </td>
-                        <td>
-                            <div class="form-inline">
-                                <select class="form-inline form-select" id="taskCategorySelect" style="margin-right: 10px;">
-                                    <option>Work (default)</option>
-                                    <option>Home</option>
-                                </select>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-              </table>
-              <div class="form-group">
-                <label for="taskDescriptionIn" class="form-label mt-4">Task Description</label>
-                <textarea class="form-control" id="taskDescriptionIn" rows="3"></textarea>
-              </div>
-              <button type="submit" class="btn btn-primary">Submit</button>
+                    <legend>New Task</legend>
+                    <table id="inputTable">
+                            <tr id="inputRow">
+                                <td style="width:100px;">
+                                    <label for="taskNameIn" class="form-inline col-form-label" style="margin-right: 10px;">Task Name:</label>
+                                </td>
+                                <td style="width:200px;">
+                                    <div class="form-group">
+                                        <div class="form-inline">
+                                            <input type="text" class="form-inline form-control" id="taskNameIn" placeholder="New Task Name">
+                                    </div>
+                                </td>
+                                <td style="width:150px;">
+                                    <label for="exampleSelect1" class="form-inline form-label" style="margin-left: 50px; margin-right: 10px;">Task Category:</label>
+                                </td>
+                                <td style="width:200px;">
+                                    <div class="form-inline">
+                                        <select class="form-inline form-select" id="taskCategorySelect" style="margin-right: 10px;">
+                                            <option>Work (default)</option>
+                                            <option>Home</option>
+                                        </select>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-primary" id="addCategoryBtn" title="Add category" style="font-size: 20px; padding-top: 0px; padding-bottom: 0px; padding-left: 7px; padding-right: 7px;">+</button>
+                                </td>
+                            </tr>
+                    </table>
+                <div id="colors"></div>
+                <div class="form-group col-sm-7">
+                    <label for="taskDescriptionIn" class="form-label mt-4">Task Description</label>
+                    <textarea class="form-control" id="taskDescriptionIn" rows="3"></textarea>
+                </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
             </fieldset>
-          </form>        
+        </form>        
     </section>
     <section id="toDoList">
 
         <fieldset class="form-group">
             <legend class="mt-4">To-Do list</legend>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="flexCheckDefault">
-              <label class="form-check-label" for="flexCheckDefault">
+            <input class="form-check-input" type="checkbox" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
                 Default checkbox
-              </label>
+            </label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="flexCheckChecked" checked="">
-              <label class="form-check-label" for="flexCheckChecked">
+            <input class="form-check-input" type="checkbox" id="flexCheckChecked" checked="">
+            <label class="form-check-label" for="flexCheckChecked">
                 Checked checkbox
-              </label>
+            </label>
             </div>
-          </fieldset>
+        </fieldset>
     </section>
 </body>
 </html>
