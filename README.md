@@ -23,18 +23,18 @@ Additional README details can be found [here](https://github.com/PrimeAcademy/re
         [ ] background color
         [ ] font family and size
         [ ] text color or background color to show whether tasks have been completed
-    [ ] think through logic prior to writing code:
-        [ ] HTML & CSS buttons:
-            [ ] input for task name
-            [ ] input for task description
-            [ ] "add task" button
+    [X] think through logic prior to writing code:
+        [X] HTML & CSS buttons:
+            [X] input for task name
+            [X] input for task description
+            [X] "add task" button
             [ ] table of task names, descriptions, and current status
-                [ ] check box to change status of multiple tasks at the same time
+                [ ] STRETCH: change status of multiple tasks at the same time
                 [ ] edit existing tasks
                 [ ] confirmation (pretty)
-            [ ] bootstrap styling
+            [x] bootstrap styling
         [ ] Client side
-            [ ] jQuery
+            [X] jQuery
             [ ] button functionality
             [ ] ajax client side for
                 [ ] GET
@@ -42,18 +42,21 @@ Additional README details can be found [here](https://github.com/PrimeAcademy/re
                 [ ] PUT
                 [ ] DELETE
         [ ] Server side
-            [ ] pull in express, pg
-            [ ] set up database communication
-            [ ] set up communication with client
+            [X] pull in express, pg
+            [X] set up database communication
+            [X] set up communication with client
             [ ] server side functionality for
                 [ ] GET
                 [ ] POST
                 [ ] PUT
                 [ ] DELETE
-        [ ] .gitignore
+        [X]  .gitignore
     [ ] STRETCH
         [ ] branches for specific tasks
         [ ] categories - color code tasks
         [ ] check if DB and table exist from JS; if not, create them from JS???
         [ ] when users add a new category, ask them what color
         [ ] use grid instead of putting inputs in table
+        [ ] limit input lengths to match SQL varchar size
+        [ ] generic check if exists function (takes table name)
+        [ ] generic create table function (takes table name, array of {columnName: datatype} objects)

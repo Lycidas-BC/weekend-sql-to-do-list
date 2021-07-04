@@ -1,10 +1,51 @@
 $( document ).ready(onReady);
 
 function onReady() {
+    initializationSequence();
     $( "#addCategoryBtn" ).on("click", addCategory);
 } //end onReady
 
 //initialize globals
+
+//general database functions
+/**
+ * checks if a table with the name tableName exists in connected database
+ * @param {string} tableName 
+ */
+function checkIfTableExists(tableName) {
+    $.ajax({
+        method: 'POST',
+        url: `/task/tableExists`,
+        data: {tableName: tableName}
+    })
+    .then((response) => {
+        console.log((response[0].exists) ? `Table exists: ${tableName}` : `Table not found: ${tableName}`);
+        return response[0].exists;
+    })
+    .catch((error) => {
+        console.log('checkIfTableExists FAILED. Please confirm that database exists at expected host and port with the appropriate permissions.', error);
+        alert('checkIfTableExists FAILED. Please confirm that database exists at expected host and port with the appropriate permissions.');
+    });
+} //end checkIfTableExists
+
+function createTable(tableName, columns) {
+    $.ajax({
+        method: 'POST',
+        url: `/task/createTable`,
+        data: {
+            tableName: tableName,
+            columns: columns
+        }
+    })
+    .then((response) => {
+        console.log((response[0].exists) ? `Table exists: ${tableName}` : `Table not found: ${tableName}`);
+        return response[0].exists;
+    })
+    .catch((error) => {
+        console.log('There was an issue validating the task table. Please confirm that database ToDoList exists at expected host and port with the appropriate permissions.', error);
+        alert('There was an issue validating the task table. Please confirm that database ToDoList exists at expected host and port with the appropriate permissions.');
+    });
+} //end createTables
 
 //remaining functions listed alphabetically
 
@@ -100,3 +141,29 @@ function addCategory() {
         $( "#colorTable").remove();
     }
 } //end addCategory
+
+/**
+ * check db communication
+ * check existence of tasks table
+ * check existence of categories table
+ * check existence of primary keys
+ * check existence of foreign keys
+ * get tasks
+ */
+function initializationSequence() {
+    //Check if table "tasks" exists, if not run create
+    if( !checkIfTableExists("tasks") ) {
+        createTable("tasks",[{name: "varchar(50) NOT NULL"}, {statusId: "int DEFAULT '1'"}, {categoryId: "int"}, {description: "varchar(250)"}]);
+    }
+
+    //Check if table "status" exists, if not run create, populate
+    if( !checkIfTableExists("status") ) {
+        createTable("status",[{status: "varchar(50) NOT NULL"}])
+    }
+
+    //Check if table "category" exists, if not run create
+    if( !checkIfTableExists("category") ) {
+        createTable("category",[{category: "varchar(50) NOT NULL"}, {color: "varchar(25) NOT NULL"}])
+    }
+
+} //end initializeDB
