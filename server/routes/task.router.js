@@ -40,7 +40,7 @@ taskRouter.post('/tableExists', (req, res) => {
             res.send(result.rows);
         })
         .catch(err => {
-            console.log('error in /tableExists', err);
+            console.log('error in /tableExists', err, 'query:', qText);
             res.sendStatus(500);
         });
 }); //end /tableExists POST route
@@ -70,32 +70,39 @@ taskRouter.post('/createTable', (req, res) => {
             res.send(true);
         })
         .catch(err => {
-            console.log('error in /createTable', err);
+            console.log('error in /createTable', err, 'query:', query);
             res.sendStatus(500);
         });
 }); //end /createTable POST route
 
 taskRouter.post('/insertToTable', (req, res) => {
     console.log('in /insertToTable');
-    console.log(req.body.tableName);
-    console.log(req.body.values);
-    // const tableName = req.body.tableName;
 
-    // let qText = `
-    //     SELECT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES
-    //     WHERE TABLE_NAME = $1);
-    // `;
+    //extract columns from first object
+    const columns = Object.keys(req.body.values[0]).join(", ");
+   
+    //construct INSERT INTO TABLE query
+    //specify table and columns
+    let query = `INSERT INTO "${req.body.tableName}" ("${columns}")
+        VALUES `;
 
-    // pool.query(qText, [tableName])
-    //     .then(result => {
-    //         res.send(result.rows);
-    //     })
-    //     .catch(err => {
-    //         console.log('error in /tableExists', err);
-    //         res.sendStatus(500);
-    //     });
-    res.sendStatus(201);
-}); //end /tableExists POST route
+    //list insert values in parentheses - (VALUE1, VALUE2, VALUE3...) - and append to array
+    let rows = []
+    for (const rowOfValues of req.body.values) {
+        rows.push( "('" + Object.values(rowOfValues).join("', '") + "')" );
+    }
+
+    //Join array - (ROW 1 Values), (ROW 2 Values), (ROW 3 Values)...; - and append to query
+    query += rows.join(', ') + ';';
+    pool.query(query)
+        .then(result => {
+            res.send(result.rows);
+        })
+        .catch(err => {
+            console.log('error in /insertToTable', err, 'query:', query);
+            res.sendStatus(500);
+        });
+}); //end /insertToTable POST route
 
 // PUT ROUTES
 
