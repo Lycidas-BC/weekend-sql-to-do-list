@@ -136,11 +136,16 @@ taskRouter.put('/updateTable/:id', (req, res) => {
         let query = `UPDATE "${req.body.tableName}"
             SET `;
 
-        //parse values object array into "column1" = 'value1', "column2" = 'value2', ...
+        //parse values object array into "column1" = $1, "column2" = $2, ...
         //and append to query
-        let rows = []
+        //values array tracks corresponding value inputs to protect against SQL injection
+        let rows = [];
+        let values = [];
+        let counter = 0;
         for (const columnValuePair of req.body.values) {
-            rows.push(`"${Object.keys(columnValuePair)[0]}" = '${Object.values(columnValuePair)[0]}'`)
+            counter += 1;
+            rows.push(`"${Object.keys(columnValuePair)[0]}" = $${counter}`)
+            values.push(`${Object.values(columnValuePair)[0]}`);
         }
         query += rows.join(', ');
 
@@ -149,7 +154,7 @@ taskRouter.put('/updateTable/:id', (req, res) => {
             WHERE "id" = '${taskId}';`;
         
         //run query
-        pool.query(query)
+        pool.query(query, values)
             .then(result => {
                 console.log('updateTable query:', query);
                 res.send(`updated ${req.body.tableName}, ${result}`);
