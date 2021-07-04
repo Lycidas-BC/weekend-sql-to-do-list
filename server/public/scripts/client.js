@@ -122,7 +122,7 @@ function addCategory() {
     const category=$( "#categoryNameIn" ).val();
     const color=$('input[name=optionsRadios]:checked').val();
     
-    insertToTable("category",[{category: category},{color: color}]);
+    insertToTable("category",[{category: category, color: color}]);
 } //end addCategory
 
 function addTask() {
