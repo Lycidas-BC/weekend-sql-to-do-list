@@ -8,27 +8,44 @@ function onReady() {
 //initialize globals
 
 //general database functions
+
 /**
  * checks if a table with the name tableName exists in connected database
- * @param {string} tableName 
+ * if not, calls createTable
+ * @param {string} tableName
+ * @param {objectArray} columns
+ * @param {objectArray} values
  */
-function checkIfTableExists(tableName) {
+function checkIfTableExists(tableName, columns, values) {
     $.ajax({
         method: 'POST',
         url: `/task/tableExists`,
         data: {tableName: tableName}
     })
     .then((response) => {
-        console.log((response[0].exists) ? `Table exists: ${tableName}` : `Table not found: ${tableName}`);
-        return response[0].exists;
+        const existsResponse = response[0].exists;
+        if (!existsResponse) {
+            console.log('Creating table:', tableName);
+            createTable(tableName, columns, values);
+        } else {
+            console.log(tableName, "already exists");
+        }
     })
     .catch((error) => {
-        console.log('checkIfTableExists FAILED. Please confirm that database exists at expected host and port with the appropriate permissions.', error);
-        alert('checkIfTableExists FAILED. Please confirm that database exists at expected host and port with the appropriate permissions.');
+        console.log('checkIfTableExists error. Please confirm that database exists at expected host and port with the appropriate permissions.', error);
+        alert('checkIfTableExists error. Please confirm that database exists at expected host and port with the appropriate permissions.');
     });
 } //end checkIfTableExists
 
-function createTable(tableName, columns) {
+/**
+ * create table with name tableName
+ * and column names and datatypes as specified in columns
+ * if values isn't empty, call insertToTable to insert
+ * @param {string} tableName 
+ * @param {objectArray} columns 
+ * @param {objectArray} values 
+ */
+function createTable(tableName, columns, values) {
     $.ajax({
         method: 'POST',
         url: `/task/createTable`,
@@ -38,14 +55,34 @@ function createTable(tableName, columns) {
         }
     })
     .then((response) => {
-        console.log((response[0].exists) ? `Table exists: ${tableName}` : `Table not found: ${tableName}`);
-        return response[0].exists;
+        console.log(tableName, "successfully created!");
+        if (response && (typeof values !== 'undefined')) {
+            insertToTable(tableName, values);
+        }
     })
     .catch((error) => {
-        console.log('There was an issue validating the task table. Please confirm that database ToDoList exists at expected host and port with the appropriate permissions.', error);
-        alert('There was an issue validating the task table. Please confirm that database ToDoList exists at expected host and port with the appropriate permissions.');
+        console.log(`createTable error. If ${tableName} table doesn't exist, run create query from database.sql manually.`, error);
+        alert(`createTable error. If ${tableName} table doesn't exist, run create query from database.sql manually.`);
     });
 } //end createTables
+
+function insertToTable(tableName, values) {
+    $.ajax({
+        method: 'POST',
+        url: `/task/insertToTable`,
+        data: {
+            tableName: tableName,
+            values: values
+        }
+    })
+    .then((response) => {
+        console.log(response);
+    })
+    .catch((error) => {
+        console.log(`insertToTable error. Populate ${tableName} using query from database.sql instead.`, error);
+        alert(`insertToTable error. Populate ${tableName} using query from database.sql instead.`);
+    });
+} //end insertToTable
 
 //remaining functions listed alphabetically
 
@@ -151,19 +188,17 @@ function addCategory() {
  * get tasks
  */
 function initializationSequence() {
-    //Check if table "tasks" exists, if not run create
-    if( !checkIfTableExists("tasks") ) {
-        createTable("tasks",[{name: "varchar(50) NOT NULL"}, {statusId: "int DEFAULT '1'"}, {categoryId: "int"}, {description: "varchar(250)"}]);
-    }
+    //Check if table "tasks" exists
+    //If not, create table using array of {columnName: dataType} objects
+    checkIfTableExists("tasks", [{name: "varchar(50) NOT NULL"}, {statusId: "int DEFAULT '1'"}, {categoryId: "int"}, {description: "varchar(250)"}])
 
-    //Check if table "status" exists, if not run create, populate
-    if( !checkIfTableExists("status") ) {
-        createTable("status",[{status: "varchar(50) NOT NULL"}])
-    }
+    //Check if table "status" exists
+    //If not, create table using array of {columnName: dataType} objects
+    //If not, populate using array of values
+    checkIfTableExists("status", [{status: "varchar(50) NOT NULL"}], [{status: 'Not started'}, {status: 'In progress'}, {status: 'Completed'}, {status: 'Paused'}, {status: 'Canceled'}])
 
     //Check if table "category" exists, if not run create
-    if( !checkIfTableExists("category") ) {
-        createTable("category",[{category: "varchar(50) NOT NULL"}, {color: "varchar(25) NOT NULL"}])
-    }
+    //If not, create table using array of {columnName: dataType} objects
+    checkIfTableExists("category", [{category: "varchar(50) NOT NULL"}, {color: "varchar(25) NOT NULL"}])
 
 } //end initializeDB
