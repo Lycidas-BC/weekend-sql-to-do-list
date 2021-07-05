@@ -27,8 +27,19 @@ pool.on('error', (err, client) => {
 taskRouter.get('/getTable/:tableName', (req, res) => {
     console.log('in getTable', req.params.tableName);
     const tableName = req.params.tableName;
-    let qText = `Select * FROM "${tableName}" ORDER BY id;`;
-
+    let qtext="";
+    if (tableName === 'tasks') {
+        //if grabbing a task, include status from status table and category from category table
+        qText = `
+            SELECT "tasks"."id", "tasks"."name", "status"."status", "category"."category", "category"."color", "tasks"."description"
+            FROM "tasks"
+            INNER JOIN "status" ON "status"."id" = "tasks"."statusId"
+            INNER JOIN "category" ON "category"."id" = "tasks"."categoryId";
+        `;
+    } else {
+        qText = `Select * FROM "${tableName}" ORDER BY id;`;
+    }
+    
     pool.query(qText)
         .then(result => {
             res.send(result.rows);

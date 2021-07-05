@@ -145,8 +145,6 @@ function insertToTable(tableName, values) {
     })
     .then((response) => {
         console.log(response);
-        //don't bother checking globals unless readyToInitialize is still false
-        console.log(tableName, "populated");
         //if table successfully initialized, update relevant globals
         if (tableName === "category") {
             categoryExists = true;
@@ -337,7 +335,6 @@ function populateCategories(categoriesArray) {
     if (typeof categoriesArray === 'undefined') {
         getTable("category");
     } else {
-        console.log(categoriesArray);
         $( "#taskCategorySelect" ).empty();
         $( "#taskCategorySelect" ).css({color:categoriesArray[0].color});
         for(const category of categoriesArray) {
@@ -353,11 +350,21 @@ function populateToDoList(tasksArray) {
     if (typeof tasksArray === 'undefined') {
         getTable("tasks");
     } else {
-        console.log('AAAAAAAAAAAA');
-        console.log('array length:', tasksArray.length);
         updateBackgroundImage(tasksArray.length);
+        $( "#toDoList" ).empty();
+        console.log("tasksArray:", tasksArray);
+        for(const task of tasksArray) {
+            console.log("task", task.id);
+            $( "#toDoList" ).append(`
+                <div class="form-check" style="color:${task.color};">
+                    <input class="form-check-input" type="checkbox" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        ${task.name}:  ${task.description} (${task.category}, ${task.status})
+                    </label>
+                </div>
+            `);
+        }
     }
-    //console.log(getTable("tasks"));
 } //end populateToDoList
 
 function updateBackgroundImage(numberOfTasks) {
