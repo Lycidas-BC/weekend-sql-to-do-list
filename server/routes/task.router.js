@@ -40,7 +40,6 @@ taskRouter.get('/getTable/:tableName', (req, res) => {
 }); //end getTable
 
 taskRouter.get('/getTasks/:category/:status', (req, res) => {
-    console.log('in getTable', req.params.tableName);
     const category = req.params.category;
     const status = req.params.status;
     let qText = `
@@ -178,7 +177,6 @@ taskRouter.post('/insertToTable', (req, res) => {
 // PUT ROUTES
 
 taskRouter.put('/updateTable/:id', (req, res) => {
-    console.log('in /updateTable');
     //make id is valid
     if (req.params.id === 'undefined') {
         console.log('error in /updateTable: invalid taskId,', req.params.id);
@@ -214,7 +212,6 @@ taskRouter.put('/updateTable/:id', (req, res) => {
         //run query
         pool.query(query, values)
             .then(result => {
-                console.log('updateTable query:', query);
                 res.send(`updated ${req.body.tableName}, ${result}`);
             })
             .catch(err => {
@@ -225,5 +222,21 @@ taskRouter.put('/updateTable/:id', (req, res) => {
 }); //end /updateTable PUT route
 
 // DELETE ROUTES
+taskRouter.delete('/:id', (req, res) => {
+    const taskId = req.params.id
+    console.log('in delete. taskId:', taskId);
+
+    const qText = `DELETE FROM "tasks" WHERE id = $1;`;
+
+    pool.query(qText, [taskId])
+        .then(dbResponse => {
+            console.log(`${dbResponse.rowCount} was deleted from database`);
+            res.sendStatus(201)
+        })
+        .catch(error => {
+            console.log(`Could not delete task with id ${taskId}.`, error);
+            res.sendStatus(500);
+        });
+});
 
 module.exports = taskRouter;

@@ -107,6 +107,25 @@ function createTable(tableName, columns, values) {
 } //end createTables
 
 /**
+ * delete task from table tasks
+ * @param {int} taskId 
+ */
+function deleteTask(taskId) {
+    $.ajax({
+        method: 'DELETE',
+        url: `/task/${taskId}`
+    })
+    .then((response) => {
+        console.log(response);
+        populateToDoList();
+    })
+    .catch((error) => {
+        console.log(`deleteTask error.`, error);
+        alert(`deleteTask error.`);
+    });
+} //end deleteTask
+
+/**
  * SELECT * from tableName
  * @param {string} tableName 
  */
@@ -437,7 +456,7 @@ function updateStatus() {
     const newStatus = $(this).data("status");
     const taskId = $(this).data("id");
     if (newStatus === 'delete') {
-
+        deleteTask(taskId);
     } else {
         updateTable("tasks", [{statusId:newStatus}], taskId);
     }
