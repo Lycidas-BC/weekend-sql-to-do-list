@@ -460,7 +460,9 @@ function updateStatus() {
     const newStatus = $(this).data("status");
     const taskId = $(this).data("id");
     if (newStatus === 'delete') {
-        deleteTask(taskId);
+        if (confirm("Are you sure you want to delete this task?")) {
+            deleteTask(taskId);
+        }
     } else {
         updateTable("tasks", [{statusId:newStatus}], taskId);
     }

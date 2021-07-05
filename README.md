@@ -14,11 +14,11 @@ Additional README details can be found [here](https://github.com/PrimeAcademy/re
     [X] Task is stored in an SQL database
     [X] Front end refresh when task is created - shows all tasks
         [ ] "show all, show finished, show unfinished,..."
-    [ ] each task should have an option "Complete" or "Delete"
-    [ ] When task is complete, change its visual representation (green background vs red or gray background or something)
-    [ ] complete option should be checked off (using CSS)
+    [X] each task should have an option "Complete" or "Delete"
+    [X] When task is complete, change its visual representation (green background vs red or gray background or something)
+    [X] complete option should be checked off (using CSS)
     [X] store task status in database
-    [ ] Deleting a task should remove it from the front end and database
+    [X] Deleting a task should remove it from the front end and database
     [X] CSS to move page beyond vanilla HTML
         [X] background color
         [X] font family and size
@@ -29,18 +29,18 @@ Additional README details can be found [here](https://github.com/PrimeAcademy/re
             [X] input for task description
             [X] "add task" button
             [X] table of task names, descriptions, and current status
-                [ ] edit existing tasks
-                [ ] confirmation (pretty)
+                [X] edit existing tasks
+                [X] confirmation (pretty)
             [x] bootstrap styling
-        [ ] Client side
+        [X] Client side
             [X] jQuery
             [X] button functionality
-            [ ] ajax client side for
+            [X] ajax client side for
                 [X] GET
                 [X] POST
                 [X] PUT
-                [ ] DELETE
-        [ ] Server side
+                [X] DELETE
+        [X] Server side
             [X] pull in express, pg
             [X] set up database communication
             [X] set up communication with client
@@ -48,7 +48,7 @@ Additional README details can be found [here](https://github.com/PrimeAcademy/re
                 [X] GET
                 [X] POST
                 [X] PUT
-                [ ] DELETE
+                [X] DELETE
         [X]  .gitignore
     [ ] STRETCH
         [ ] branches for specific tasks
