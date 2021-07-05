@@ -105,6 +105,10 @@ function createTable(tableName, columns, values) {
     });
 } //end createTables
 
+/**
+ * SELECT * from tableName
+ * @param {string} tableName 
+ */
 function getTable(tableName) {
     $.ajax({
         method: 'GET',
@@ -114,6 +118,9 @@ function getTable(tableName) {
         console.log('getTable response:', response);
         if (tableName === 'category') {
             populateCategories(response);
+        }
+        if (tableName === 'tasks') {
+            populateToDoList(response);
         }
     })
     .catch((error) => {
@@ -189,7 +196,6 @@ function updateTable(tableName, values, taskId) {
 //OTHER FUNCTIONS (alphabetical)
 
 function addCategory() {
-    console.log('in addCategory');
     const category=$( "#categoryNameIn" ).val();
     const color=$('input[name=optionsRadios]:checked').val();
     insertToTable("category",[{category: category, color: color}]);
@@ -197,6 +203,11 @@ function addCategory() {
 
 function addTask() {
     console.log('in addTask');
+    const taskName = $( "#taskNameIn" ).val();
+    const categoryId = $( "#taskCategorySelect option:selected" ).data("id");
+    const taskDescription = $( "#taskDescriptionIn").val();
+    insertToTable("tasks",[{name: taskName, statusId: 1, categoryId: categoryId, description: taskDescription}]);
+    populateToDoList();
 } //end addTask
 
 function expandCategory() {
@@ -319,7 +330,6 @@ function initializeDb() {
     //Check if table "category" exists, if not run create
     //If not, create table using array of {columnName: dataType} objects
     checkIfTableExists("category", [{category: "varchar(50) NOT NULL"}, {color: "varchar(25) NOT NULL"}],[{category: "work (default)", color: "red"}, {category: "home", color: "green"}]);
-
 } //end initializeDb
 
 function populateCategories(categoriesArray) {
@@ -332,16 +342,31 @@ function populateCategories(categoriesArray) {
         $( "#taskCategorySelect" ).css({color:categoriesArray[0].color});
         for(const category of categoriesArray) {
             $( "#taskCategorySelect" ).append(`
-                <option data-color="${category.color}">${category.category}</option>
+                <option data-id="${category.id}" data-color="${category.color}">${category.category}</option>
             `);
         }
     }
 } //end populateCategories
 
-function populateToDoList(params) {
+function populateToDoList(tasksArray) {
     console.log('in populateToDoList');
+    if (typeof tasksArray === 'undefined') {
+        getTable("tasks");
+    } else {
+        console.log('AAAAAAAAAAAA');
+        console.log('array length:', tasksArray.length);
+        updateBackgroundImage(tasksArray.length);
+    }
     //console.log(getTable("tasks"));
 } //end populateToDoList
+
+function updateBackgroundImage(numberOfTasks) {
+    let backgroundSize = 70/numberOfTasks;
+    //background image
+    $( "body" ).css( "background-position", "top left");
+    $( "body" ).css( "background-repeat", "repeat");
+    $( "body" ).css( "background-size", `${backgroundSize}%`);
+} //end updateBackgroundImage
 
 function updateCategoryColor() {
     let color = $( "#taskCategorySelect option:selected" ).data("color");
