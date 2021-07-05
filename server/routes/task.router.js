@@ -44,7 +44,7 @@ taskRouter.get('/getTasks/:category/:status', (req, res) => {
     const category = req.params.category;
     const status = req.params.status;
     let qText = `
-        SELECT "tasks"."id", "tasks"."name", "status"."status", "category"."category", "category"."color", "tasks"."description"
+        SELECT "tasks"."id", "tasks"."name", "status"."status", "status"."color" AS "statusColor", "category"."category", "category"."color" AS "categoryColor", "tasks"."description"
         FROM "tasks"
         INNER JOIN "status" ON "status"."id" = "tasks"."statusId"
         INNER JOIN "category" ON "category"."id" = "tasks"."categoryId"

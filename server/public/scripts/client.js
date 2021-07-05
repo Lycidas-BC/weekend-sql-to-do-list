@@ -342,7 +342,7 @@ function initializeDb() {
     //Check if table "status" exists
     //If not, create table using array of {columnName: dataType} objects
     //If not, populate using array of values
-    checkIfTableExists("status", [{status: "varchar(50) NOT NULL"}], [{status: 'Not started'}, {status: 'In progress'}, {status: 'Completed'}, {status: 'Paused'}, {status: 'Canceled'}]);
+    checkIfTableExists("status", [{status: "varchar(50) NOT NULL"}, {color: "varchar(25) NOT NULL"}], [{status: 'Not started', color: 'red'}, {status: 'In progress', color: 'yellow'}, {status: 'Completed', color: 'green'}, {status: 'Paused', color: 'gray'}, {status: 'Canceled', color: 'black'}]);
 
     //Check if table "category" exists, if not run create
     //If not, create table using array of {columnName: dataType} objects
@@ -367,7 +367,7 @@ function populateCategories(categoriesArray) {
 function populateToDoList(tasksArray) {
     console.log('in populateToDoList');
     if (typeof tasksArray === 'undefined') {
-        getTasks("Fun", "all");
+        getTasks("all", "all");
     } else {
         updateBackgroundImage(tasksArray.length);
         $( "#toDoList" ).empty();
@@ -375,10 +375,10 @@ function populateToDoList(tasksArray) {
         for(const task of tasksArray) {
             console.log("task", task.id);
             $( "#toDoList" ).append(`
-                <div class="form-check" style="color:${task.color};">
+                <div class="form-check" style="color:${task.categoryColor};">
                     <input class="form-check-input" type="checkbox" id="flexCheckDefault">
                     <label class="form-check-label" for="flexCheckDefault">
-                        ${task.name}:  ${task.description} (${task.category}, ${task.status})
+                        <div class="circle" style="background-color:${task.statusColor};"></div>${task.name}:  ${task.description} (${task.category}, ${task.status})
                     </label>
                 </div>
             `);
@@ -387,11 +387,13 @@ function populateToDoList(tasksArray) {
 } //end populateToDoList
 
 function updateBackgroundImage(numberOfTasks) {
-    let backgroundSize = 70/numberOfTasks;
-    //background image
-    $( "body" ).css( "background-position", "top left");
-    $( "body" ).css( "background-repeat", "repeat");
-    $( "body" ).css( "background-size", `${backgroundSize}%`);
+    if (numberOfTasks !== 0) {
+        let backgroundSize = 70/Math.sqrt(numberOfTasks);
+        //background image
+        $( "body" ).css( "background-position", "top left");
+        $( "body" ).css( "background-repeat", "repeat");
+        $( "body" ).css( "background-size", `${backgroundSize}%`);
+    }
 } //end updateBackgroundImage
 
 function updateCategoryColor() {

@@ -59,3 +59,4 @@ Additional README details can be found [here](https://github.com/PrimeAcademy/re
         [ ] limit input lengths to match SQL varchar size
         [X] generic check if exists function (takes table name)
         [X] generic create table function (takes table name, array of {columnName: datatype} objects)
+        [ ] allow users to expand or minimize task description
