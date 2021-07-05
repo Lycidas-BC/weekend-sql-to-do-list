@@ -237,6 +237,7 @@ function addCategory() {
     const category=$( "#categoryNameIn" ).val();
     const color=$('input[name=optionsRadios]:checked').val();
     insertToTable("category",[{category: category, color: color}]);
+    expandCategory();
 } //end addCategory
 
 function addTask() {
@@ -246,6 +247,9 @@ function addTask() {
     const taskDescription = $( "#taskDescriptionIn").val();
     insertToTable("tasks",[{name: taskName, statusId: 1, categoryId: categoryId, description: taskDescription}]);
     populateToDoList();
+    $( "#taskNameIn" ).val("");
+    $( "#taskDescriptionIn").val("");
+    $( "#taskCategorySelect" ).val("");
 } //end addTask
 
 function expandCategory() {
