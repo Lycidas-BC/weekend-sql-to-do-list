@@ -22,7 +22,7 @@ Additional README details can be found [here](https://github.com/PrimeAcademy/re
     [X] CSS to move page beyond vanilla HTML
         [X] background color
         [X] font family and size
-        [ ] text color or background color to show whether tasks have been completed
+        [X] text color or background color to show whether tasks have been completed
     [X] think through logic prior to writing code:
         [X] HTML & CSS buttons:
             [X] input for task name
@@ -52,7 +52,8 @@ Additional README details can be found [here](https://github.com/PrimeAcademy/re
         [X]  .gitignore
     [ ] STRETCH
         [ ] branches for specific tasks
-        [ ] categories - color code tasks
+        [X] categories - color code tasks
+        [X] status - color code tasks
         [X] check if DB and table exist from JS; if not, create them from JS???
         [X] when users add a new category, ask them what color
         [ ] use grid instead of putting inputs in table
@@ -60,3 +61,5 @@ Additional README details can be found [here](https://github.com/PrimeAcademy/re
         [X] generic check if exists function (takes table name)
         [X] generic create table function (takes table name, array of {columnName: datatype} objects)
         [ ] allow users to expand or minimize task description
+        [X] play: switch task to in progress; pause: switch task to paused
+        [X] trash icon for delete button

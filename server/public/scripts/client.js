@@ -374,11 +374,31 @@ function populateToDoList(tasksArray) {
         console.log("tasksArray:", tasksArray);
         for(const task of tasksArray) {
             console.log("task", task.id);
+            // add button that allows people to switch paused or not started tasks to in progress
+            // or in progress tasks to paused
+            let playPauseButton = `<button class="nothing"></button>`;
+            if (task.status === 'Not started' || task.status === 'Paused'){
+                playPauseButton = `<button class="button play playPauseButton" data-id="${task.id}"></button>`;
+            } else if (task.status === 'In progress'){
+                playPauseButton = `<button class="button pause playPauseButton" data-id="${task.id}"></button>`;
+            }
+            // add icon for canceling or deleting tasks
+            let cancelDeleteButton = "";
+            if (task.status === 'Canceled' || task.status === 'Completed' ) {
+                cancelDeleteButton = `<span class="trash" data-id="${task.id}"><img src="images/trash.png"></span>`;
+            } else {
+                cancelDeleteButton = `<span class="cancel" data-id="${task.id}"><img src="images/cancel.png"></span>`;
+            }
+            // add check off completed tasks
+            let completedString = "";
+            if (task.status === 'Completed' ) {
+                completedString = ` checked=""`;
+            } 
             $( "#toDoList" ).append(`
                 <div class="form-check" style="color:${task.categoryColor};">
-                    <input class="form-check-input" type="checkbox" id="flexCheckDefault">
+                    <input class="form-check-input" type="checkbox" id="flexCheckDefault"${completedString}>
                     <label class="form-check-label" for="flexCheckDefault">
-                        <div class="circle" style="background-color:${task.statusColor};"></div>${task.name}:  ${task.description} (${task.category}, ${task.status})
+                        ${playPauseButton} ${cancelDeleteButton} <div class="circle" style="background-color:${task.statusColor};"></div>${task.name}:  ${task.description} (${task.category}, ${task.status})
                     </label>
                 </div>
             `);
