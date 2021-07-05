@@ -24,6 +24,21 @@ pool.on('error', (err, client) => {
 
 // GET ROUTES
 
+taskRouter.get('/getTable/:tableName', (req, res) => {
+    console.log('in getTable', req.params.tableName);
+    const tableName = req.params.tableName;
+    let qText = `Select * FROM "${tableName}" ORDER BY id;`;
+
+    pool.query(qText)
+        .then(result => {
+            res.send(result.rows);
+        })
+        .catch(err => {
+            console.log(`Error trying to get ${tableName}`, err);
+            res.sendStatus(500);
+        });
+});
+
 // POST ROUTES
 taskRouter.post('/tableExists', (req, res) => {
     console.log('in /tableExists');

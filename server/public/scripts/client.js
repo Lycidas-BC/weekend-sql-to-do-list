@@ -1,14 +1,21 @@
 $( document ).ready(onReady);
 
 function onReady() {
+    //if necessary, create databases and populate with defaults
     initializeDb();
-    initializeFromDb();
-    $( "#expandCategoryBtn" ).on("click", expandCategory);
+
+    //event-dependent function calls
     $( "#colors" ).on("click", "#addCategoryBtn", addCategory);
     $( "#addTaskBtn" ).on("click", addTask);
+    $( "#expandCategoryBtn" ).on("click", expandCategory);
 } //end onReady
 
-//initialize any globals
+//INITIALIZE GLOBALS
+
+//confirm that tables exist before running initial GET
+let tasksExists = false;
+let statusExists = false;
+let categoryExists = false;
 
 //GENERAL DB FUNCTIONS (alphabetical)
 
@@ -32,6 +39,21 @@ function checkIfTableExists(tableName, columns, values) {
             createTable(tableName, columns, values);
         } else {
             console.log(tableName, "already exists");
+            //if tables already exist, update relevant globals
+            if (tableName === "category") {
+                categoryExists = true;
+            }
+            if (tableName === "status") {
+                statusExists = true;
+            }
+            if (tableName === "tasks") {
+                tasksExists = true;
+            }
+            if (categoryExists && statusExists && tasksExists) {
+                //if all three tables already exist, GET from database
+                //otherwise, wait until they've been created
+                getFromDb();
+            }
         }
     })
     .catch((error) => {
@@ -59,8 +81,21 @@ function createTable(tableName, columns, values) {
     })
     .then((response) => {
         console.log(tableName, "table successfully created!");
+        console.log(response);
         if (response && (typeof values !== 'undefined')) {
             insertToTable(tableName, values);
+        } else {
+            console.log(tableName, "created");
+            //if successfully created and there are no values to initialize it, update relevant globals
+            if (tableName === "category") {
+                categoryExists = true;
+            }
+            if (tableName === "status") {
+                statusExists = true;
+            }
+            if (tableName === "tasks") {
+                tasksExists = true;
+            }
         }
     })
     .catch((error) => {
@@ -68,6 +103,21 @@ function createTable(tableName, columns, values) {
         alert(`createTable error. If ${tableName} table doesn't exist, run create query from database.sql manually.`);
     });
 } //end createTables
+
+function getTable(tableName) {
+    $.ajax({
+        method: 'GET',
+        url: `/task/getTable/${tableName}`
+    })
+    .then((response) => {
+        console.log(response);
+        return response;
+    })
+    .catch((error) => {
+        console.log(`getTable error.`, error);
+        alert(`getTable error.`);
+    });
+} //end getTable
 
 /**
  * insert to tableName from objectarray values
@@ -85,6 +135,23 @@ function insertToTable(tableName, values) {
     })
     .then((response) => {
         console.log(response);
+        //don't bother checking globals unless readyToInitialize is still false
+        console.log(tableName, "populated");
+        //if table successfully initialized, update relevant globals
+        if (tableName === "category") {
+            categoryExists = true;
+        }
+        if (tableName === "status") {
+            statusExists = true;
+        }
+        if (tableName === "tasks") {
+            tasksExists = true;
+        }
+        if (categoryExists && statusExists && tasksExists) {
+            //if all three tables already exist, GET from database
+            //otherwise, wait until they've been created
+            getFromDb();
+        }
     })
     .catch((error) => {
         console.log(`insertToTable error. Populate ${tableName} using query from database.sql instead.`, error);
@@ -123,7 +190,6 @@ function addCategory() {
     const category=$( "#categoryNameIn" ).val();
     const color=$('input[name=optionsRadios]:checked').val();
     insertToTable("category",[{category: category, color: color}]);
-    return true;
 } //end addCategory
 
 function addTask() {
@@ -223,6 +289,12 @@ function expandCategory() {
     }
 } //end expandCategory
 
+function getFromDb() {
+    console.log("in getFromDb");
+    populateCategories();
+    populateToDoList();
+} //end getFromDb
+
 /**
  * check db communication
  * check existence of tasks table
@@ -243,20 +315,16 @@ function initializeDb() {
 
     //Check if table "category" exists, if not run create
     //If not, create table using array of {columnName: dataType} objects
-    checkIfTableExists("category", [{category: "varchar(50) NOT NULL"}, {color: "varchar(25) NOT NULL"}]);
+    checkIfTableExists("category", [{category: "varchar(50) NOT NULL"}, {color: "varchar(25) NOT NULL"}],[{category: "work (default)", color: "red"}, {category: "home", color: "green"}]);
 
 } //end initializeDb
 
-function initializeFromDb() {
-    console.log("in initializeFromDb");
-    populateCategories();
-    populateToDoList();
-} //end initializeFromDb
-
 function populateCategories() {
     console.log('in populateCategories');
+    console.log(getTable("category"));
 } //end populateCategories
 
 function populateToDoList(params) {
     console.log('in populateToDoList');
+    console.log(getTable("tasks"));
 } //end populateToDoList
