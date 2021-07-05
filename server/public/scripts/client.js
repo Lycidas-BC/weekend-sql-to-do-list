@@ -9,6 +9,7 @@ function onReady() {
     $( "#addTaskBtn" ).on("click", addTask);
     $( "#expandCategoryBtn" ).on("click", expandCategory);
     $( "#taskCategorySelect" ).on("change", updateCategoryColor);
+    $( "#toDoList" ).on("click", ".clickable", updateStatus)
 } //end onReady
 
 //INITIALIZE GLOBALS
@@ -203,6 +204,7 @@ function updateTable(tableName, values, taskId) {
     })
     .then((response) => {
         console.log(response);
+        populateToDoList();
     })
     .catch((error) => {
         console.log(`updateTable error.`, error);
@@ -378,27 +380,34 @@ function populateToDoList(tasksArray) {
             // or in progress tasks to paused
             let playPauseButton = `<button class="nothing"></button>`;
             if (task.status === 'Not started' || task.status === 'Paused'){
-                playPauseButton = `<button class="button play playPauseButton" data-id="${task.id}"></button>`;
+                playPauseButton = `<button class="clickable button play playPauseButton" data-id="${task.id}" data-status="2"></button>`;
             } else if (task.status === 'In progress'){
-                playPauseButton = `<button class="button pause playPauseButton" data-id="${task.id}"></button>`;
+                playPauseButton = `<button class="clickable button pause playPauseButton" data-id="${task.id}" data-status="4"></button>`;
+            }
+            // cross out canceled tasks
+            
+            let cancelDeleteButton = "";
+            let lineThrough = "";
+            if (task.status === 'Canceled') {
+                lineThrough = `style="text-decoration: line-through; text-decoration-style: wavy;"`;
             }
             // add icon for canceling or deleting tasks
-            let cancelDeleteButton = "";
             if (task.status === 'Canceled' || task.status === 'Completed' ) {
-                cancelDeleteButton = `<span class="trash" data-id="${task.id}"><img src="images/trash.png"></span>`;
+                cancelDeleteButton = `<span class="clickable trash" data-id="${task.id}" data-status="delete"><img src="images/trash.png"></span>`;
             } else {
-                cancelDeleteButton = `<span class="cancel" data-id="${task.id}"><img src="images/cancel.png"></span>`;
+                cancelDeleteButton = `<span class="clickable cancel" data-id="${task.id}" data-status="5"><img src="images/cancel.png"></span>`;
             }
             // add check off completed tasks
-            let completedString = "";
+            let completedString = `data-status="3"`;
             if (task.status === 'Completed' ) {
-                completedString = ` checked=""`;
+                completedString = `data-status="2" checked=""`;
             } 
             $( "#toDoList" ).append(`
                 <div class="form-check" style="color:${task.categoryColor};">
-                    <input class="form-check-input" type="checkbox" id="flexCheckDefault"${completedString}>
-                    <label class="form-check-label" for="flexCheckDefault">
-                        ${playPauseButton} ${cancelDeleteButton} <div class="circle" style="background-color:${task.statusColor};"></div>${task.name}:  ${task.description} (${task.category}, ${task.status})
+                    <input class="clickable form-check-input" type="checkbox" data-id="${task.id}" ${completedString}>
+                    ${playPauseButton} ${cancelDeleteButton} <div class="circle" style="background-color:${task.statusColor};"></div>
+                    <label class="form-check-label" for="flexCheckDefault" ${lineThrough}>
+                        ${task.name}:  ${task.description} (${task.category}, ${task.status})
                     </label>
                 </div>
             `);
@@ -422,3 +431,14 @@ function updateCategoryColor() {
     const newColor = (color === 'yellow') ? 'gold' : color;
     $( "#taskCategorySelect" ).css({"color":newColor});
 } //end updateCategoryColor
+
+function updateStatus() {
+    console.log('in updateStatus');
+    const newStatus = $(this).data("status");
+    const taskId = $(this).data("id");
+    if (newStatus === 'delete') {
+
+    } else {
+        updateTable("tasks", [{statusId:newStatus}], taskId);
+    }
+} //end updateStatus

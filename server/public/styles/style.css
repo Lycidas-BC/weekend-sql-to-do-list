@@ -53,4 +53,5 @@ body {
   margin-left: -10px;
   width: 14px;
   border-radius: 10%;
+  background: rgba(255, 255, 255, 0);
 }
