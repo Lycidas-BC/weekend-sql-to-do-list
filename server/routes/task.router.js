@@ -34,7 +34,8 @@ taskRouter.get('/getTable/:tableName', (req, res) => {
             SELECT "tasks"."id", "tasks"."name", "status"."status", "category"."category", "category"."color", "tasks"."description"
             FROM "tasks"
             INNER JOIN "status" ON "status"."id" = "tasks"."statusId"
-            INNER JOIN "category" ON "category"."id" = "tasks"."categoryId";
+            INNER JOIN "category" ON "category"."id" = "tasks"."categoryId"
+            ORDER BY "tasks"."id";
         `;
     } else {
         qText = `Select * FROM "${tableName}" ORDER BY id;`;
