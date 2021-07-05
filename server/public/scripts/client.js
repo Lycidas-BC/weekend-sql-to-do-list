@@ -109,7 +109,7 @@ function createTable(tableName, columns, values) {
  * SELECT * from tableName
  * @param {string} tableName 
  */
-function getTable(tableName) {
+ function getTable(tableName) {
     $.ajax({
         method: 'GET',
         url: `/task/getTable/${tableName}`
@@ -128,6 +128,25 @@ function getTable(tableName) {
         alert(`getTable error.`);
     });
 } //end getTable
+
+/**
+ * SELECT * from tableName
+ * @param {string} tableName 
+ */
+function getTasks(category, status) {
+    $.ajax({
+        method: 'GET',
+        url: `/task/getTasks/${category}/${status}`
+    })
+    .then((response) => {
+        console.log('getTasks response:', response);
+        populateToDoList(response);
+    })
+    .catch((error) => {
+        console.log(`getTable error.`, error);
+        alert(`getTable error.`);
+    });
+} //end getTasksTable
 
 /**
  * insert to tableName from objectarray values
@@ -348,7 +367,7 @@ function populateCategories(categoriesArray) {
 function populateToDoList(tasksArray) {
     console.log('in populateToDoList');
     if (typeof tasksArray === 'undefined') {
-        getTable("tasks");
+        getTasks("Fun", "all");
     } else {
         updateBackgroundImage(tasksArray.length);
         $( "#toDoList" ).empty();

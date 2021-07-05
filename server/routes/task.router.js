@@ -27,19 +27,7 @@ pool.on('error', (err, client) => {
 taskRouter.get('/getTable/:tableName', (req, res) => {
     console.log('in getTable', req.params.tableName);
     const tableName = req.params.tableName;
-    let qtext="";
-    if (tableName === 'tasks') {
-        //if grabbing a task, include status from status table and category from category table
-        qText = `
-            SELECT "tasks"."id", "tasks"."name", "status"."status", "category"."category", "category"."color", "tasks"."description"
-            FROM "tasks"
-            INNER JOIN "status" ON "status"."id" = "tasks"."statusId"
-            INNER JOIN "category" ON "category"."id" = "tasks"."categoryId"
-            ORDER BY "tasks"."id";
-        `;
-    } else {
-        qText = `Select * FROM "${tableName}" ORDER BY id;`;
-    }
+    let qtext = qText = `Select * FROM "${tableName}" ORDER BY id;`;
     
     pool.query(qText)
         .then(result => {
@@ -49,7 +37,50 @@ taskRouter.get('/getTable/:tableName', (req, res) => {
             console.log(`Error trying to get ${tableName}`, err);
             res.sendStatus(500);
         });
-});
+}); //end getTable
+
+taskRouter.get('/getTasks/:category/:status', (req, res) => {
+    console.log('in getTable', req.params.tableName);
+    const category = req.params.category;
+    const status = req.params.status;
+    let qText = `
+        SELECT "tasks"."id", "tasks"."name", "status"."status", "category"."category", "category"."color", "tasks"."description"
+        FROM "tasks"
+        INNER JOIN "status" ON "status"."id" = "tasks"."statusId"
+        INNER JOIN "category" ON "category"."id" = "tasks"."categoryId"
+        
+    `;
+    if (category === 'all' && status === 'all') {
+        //no need to add WHERE clause
+    } else if (category === 'all') {
+        //add WHERE clause for status
+        qText += `
+            WHERE "status"."status" LIKE '${status}'
+        `;
+    } else if (status === 'all') {
+        //add WHERE clause for category
+        qText += `
+            WHERE "category"."category" LIKE '${category}'
+        `;
+    } else {
+        //add WHERE clause for status and category
+        qText += `
+            WHERE "category"."category" LIKE '${category}'
+            AND "status"."status" LIKE '${status}'
+        `;
+    }
+    
+    qText += `ORDER BY "tasks"."id"`;
+
+    pool.query(qText)
+        .then(result => {
+            res.send(result.rows);
+        })
+        .catch(err => {
+            console.log(`Error trying to get ${tableName}`, err);
+            res.sendStatus(500);
+        });
+}); //end getTasks
 
 // POST ROUTES
 taskRouter.post('/tableExists', (req, res) => {
