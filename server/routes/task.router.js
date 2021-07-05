@@ -92,11 +92,9 @@ taskRouter.post('/createTable', (req, res) => {
 
 taskRouter.post('/insertToTable', (req, res) => {
     console.log('in /insertToTable');
-    console.log(req.body);
 
     //extract columns from first object
     const columns = Object.keys(req.body.values[0]).join(`", "`);
-    console.log("columns:", columns,"req.body.values[0]",req.body.values[0]);
    
     //construct INSERT INTO TABLE query
     //specify table and columns
@@ -120,8 +118,10 @@ taskRouter.post('/insertToTable', (req, res) => {
 
     //Join array - (ROW 1 Values), (ROW 2 Values), (ROW 3 Values)...; - and append to query
     query += rows.join(', ') + ';';
-    console.log(query);
-    console.log(values);
+
+    //useful console logs:
+    // console.log(query);
+    // console.log(values);
     pool.query(query, values)
         .then(result => {
             res.send(`inserted ${result.rowCount} rows into ${req.body.tableName}`);

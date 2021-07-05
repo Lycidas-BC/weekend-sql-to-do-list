@@ -8,6 +8,7 @@ function onReady() {
     $( "#colors" ).on("click", "#addCategoryBtn", addCategory);
     $( "#addTaskBtn" ).on("click", addTask);
     $( "#expandCategoryBtn" ).on("click", expandCategory);
+    $( "#taskCategorySelect" ).on("change", updateCategoryColor);
 } //end onReady
 
 //INITIALIZE GLOBALS
@@ -110,8 +111,10 @@ function getTable(tableName) {
         url: `/task/getTable/${tableName}`
     })
     .then((response) => {
-        console.log(response);
-        return response;
+        console.log('getTable response:', response);
+        if (tableName === 'category') {
+            populateCategories(response);
+        }
     })
     .catch((error) => {
         console.log(`getTable error.`, error);
@@ -319,12 +322,30 @@ function initializeDb() {
 
 } //end initializeDb
 
-function populateCategories() {
+function populateCategories(categoriesArray) {
     console.log('in populateCategories');
-    console.log(getTable("category"));
+    if (typeof categoriesArray === 'undefined') {
+        getTable("category");
+    } else {
+        console.log(categoriesArray);
+        $( "#taskCategorySelect" ).empty();
+        $( "#taskCategorySelect" ).css({color:categoriesArray[0].color});
+        for(const category of categoriesArray) {
+            $( "#taskCategorySelect" ).append(`
+                <option data-color="${category.color}">${category.category}</option>
+            `);
+        }
+    }
 } //end populateCategories
 
 function populateToDoList(params) {
     console.log('in populateToDoList');
-    console.log(getTable("tasks"));
+    //console.log(getTable("tasks"));
 } //end populateToDoList
+
+function updateCategoryColor() {
+    let color = $( "#taskCategorySelect option:selected" ).data("color");
+    //gold looks better than yellow
+    const newColor = (color === 'yellow') ? 'gold' : color;
+    $( "#taskCategorySelect" ).css({"color":newColor});
+} //end updateCategoryColor
